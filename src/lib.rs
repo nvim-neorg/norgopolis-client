@@ -1,13 +1,9 @@
 use futures::FutureExt;
 use std::future::Future;
 
-use communication::{forwarder_client::ForwarderClient, Invocation, MessagePack};
+use norgopolis_protos::client_communication::{forwarder_client::ForwarderClient, Invocation, MessagePack};
 use serde::de::DeserializeOwned;
 use tonic::{transport::Channel, Request, Response, Status, Streaming};
-
-pub mod communication {
-    tonic::include_proto!("communication");
-}
 
 pub struct ConnectionHandle(ForwarderClient<Channel>);
 
