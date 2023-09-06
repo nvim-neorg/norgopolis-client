@@ -1,7 +1,9 @@
 use futures::FutureExt;
 use std::future::Future;
 
-use norgopolis_protos::client_communication::{forwarder_client::ForwarderClient, Invocation, MessagePack};
+use norgopolis_protos::client_communication::{forwarder_client::ForwarderClient, Invocation};
+pub use norgopolis_protos::client_communication::MessagePack;
+
 use serde::de::DeserializeOwned;
 use tonic::{transport::Channel, Request, Response, Status, Streaming};
 
