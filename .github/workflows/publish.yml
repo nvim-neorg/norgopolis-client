@@ -22,8 +22,7 @@ jobs:
           override: true
 
       - run: |
-          apt update
-          apt install protobuf-compiler --yes
+          sudo apt install protobuf-compiler --yes
           cargo publish --token ${CRATES_TOKEN}
         env:
           CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
