@@ -21,6 +21,9 @@ jobs:
           toolchain: stable
           override: true
 
-      - run: cargo publish --token ${CRATES_TOKEN}
+      - run: |
+          apt update
+          apt install protobuf-compiler --yes
+          cargo publish --token ${CRATES_TOKEN}
         env:
           CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
