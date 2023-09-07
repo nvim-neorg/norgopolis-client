@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.1](https://github.com/nvim-neorg/norgopolis-client/compare/v0.2.0...v0.2.1) (2023-09-07)
+
+
+### Bug Fixes
+
+* **ci:** install protobuf compiler before executing cargo publish ([33bc405](https://github.com/nvim-neorg/norgopolis-client/commit/33bc4059803be0507cab74bdb0f3a393878793d6))
+* **ci:** use `sudo` on apt commands ([41f310d](https://github.com/nvim-neorg/norgopolis-client/commit/41f310d74f7367897a6b2dde90525fb68a65a752))
+* update now-outdated `norgopolis-protos` dependency ([c71c87d](https://github.com/nvim-neorg/norgopolis-client/commit/c71c87d6236fb356edeb18519769f560f17633f2))
+
 ## 0.2.0 (2023-09-06)
 
 
