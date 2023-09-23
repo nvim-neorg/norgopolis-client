@@ -1,8 +1,8 @@
 use futures::FutureExt;
 use std::future::Future;
 
-use norgopolis_protos::client_communication::{forwarder_client::ForwarderClient, Invocation};
 pub use norgopolis_protos::client_communication::MessagePack;
+use norgopolis_protos::client_communication::{forwarder_client::ForwarderClient, Invocation};
 
 use serde::de::DeserializeOwned;
 use tonic::{transport::Channel, Request, Response, Status, Streaming};
@@ -10,12 +10,12 @@ use tonic::{transport::Channel, Request, Response, Status, Streaming};
 pub struct ConnectionHandle(ForwarderClient<Channel>);
 
 impl ConnectionHandle {
-    pub fn invoke_raw<'a>(
-        &'a mut self,
+    pub fn invoke_raw(
+        &mut self,
         module: String,
         function_name: String,
         args: Option<MessagePack>,
-    ) -> impl Future<Output = Result<Response<Streaming<MessagePack>>, Status>> + 'a {
+    ) -> impl Future<Output = Result<Response<Streaming<MessagePack>>, Status>> + '_ {
         self.0.forward(Request::new(Invocation {
             module,
             function_name,
@@ -23,25 +23,53 @@ impl ConnectionHandle {
         }))
     }
 
-    pub async fn invoke<'a, TargetStruct, F>(
-        &'a mut self,
+    pub async fn invoke_raw_callback<F>(
+        &mut self,
         module: String,
         function_name: String,
         args: Option<MessagePack>,
-        callback: F
+        callback: F,
     ) -> anyhow::Result<()>
-        where F: Fn(TargetStruct),
+    where
+        F: Fn(MessagePack),
+    {
+        self.invoke_raw(module, function_name, args)
+            .then(|response| async move {
+                let mut response = response?.into_inner();
+
+                while let Some(data) = response.message().await? {
+                    callback(data);
+                }
+
+                Ok::<(), anyhow::Error>(())
+            })
+            .await?;
+
+        Ok(())
+    }
+
+    pub async fn invoke<TargetStruct, F>(
+        &mut self,
+        module: String,
+        function_name: String,
+        args: Option<MessagePack>,
+        callback: F,
+    ) -> anyhow::Result<()>
+    where
+        F: Fn(TargetStruct),
         TargetStruct: DeserializeOwned,
     {
-        self.invoke_raw(module, function_name, args).then(|response| async move {
-            let mut response = response?.into_inner();
+        self.invoke_raw(module, function_name, args)
+            .then(|response| async move {
+                let mut response = response?.into_inner();
 
-            while let Some(data) = response.message().await? {
-                callback(rmp_serde::from_slice::<TargetStruct>(data.data.as_slice()).unwrap());
-            }
+                while let Some(data) = response.message().await? {
+                    callback(rmp_serde::from_slice::<TargetStruct>(data.data.as_slice()).unwrap());
+                }
 
-            Ok::<(), anyhow::Error>(())
-        }).await?;
+                Ok::<(), anyhow::Error>(())
+            })
+            .await?;
 
         Ok(())
     }
@@ -82,6 +110,16 @@ mod tests {
 
     #[tokio::test]
     async fn establish_connection() {
-        connect(&"127.0.0.1".into(), &"62020".into()).await.unwrap().invoke("test-module".to_string(), "func-name".to_string(), None, |response: (String,)| println!("{}", response.0)).await.unwrap();
+        connect(&"127.0.0.1".into(), &"62020".into())
+            .await
+            .unwrap()
+            .invoke(
+                "test-module".to_string(),
+                "func-name".to_string(),
+                None,
+                |response: (String,)| println!("{}", response.0),
+            )
+            .await
+            .unwrap();
     }
 }
