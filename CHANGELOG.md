@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/nvim-neorg/norgopolis-client/compare/v0.2.1...v0.3.0) (2023-09-23)
+
+
+### Features
+
+* add `invoke_raw_callback` function ([ef17e75](https://github.com/nvim-neorg/norgopolis-client/commit/ef17e7590bfc591132b5b043b9e0809e3ee5e030))
+
 ## [0.2.1](https://github.com/nvim-neorg/norgopolis-client/compare/v0.2.0...v0.2.1) (2023-09-07)
 
 
