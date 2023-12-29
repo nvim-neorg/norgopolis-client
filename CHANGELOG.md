@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/nvim-neorg/norgopolis-client/compare/v0.3.0...v0.4.0) (2023-12-29)
+
+
+### Features
+
+* add ability to spawn the norgopolis server behind feature flag ([b9b1ca9](https://github.com/nvim-neorg/norgopolis-client/commit/b9b1ca9f22ffaf823935e88681ae45dae7bcd3be))
+
+
+### Bug Fixes
+
+* disable `autostart` feature by default as per rust guidelines ([7d58b06](https://github.com/nvim-neorg/norgopolis-client/commit/7d58b063d1d80c11b3575a1dd61f2f64f755c6ca))
+
 ## [0.3.0](https://github.com/nvim-neorg/norgopolis-client/compare/v0.2.1...v0.3.0) (2023-09-23)
 
 
