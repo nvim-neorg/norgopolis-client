@@ -1,5 +1,5 @@
 use futures::FutureExt;
-use std::future::Future;
+use std::{future::Future, process::Command};
 
 pub use norgopolis_protos::client_communication::MessagePack;
 use norgopolis_protos::client_communication::{forwarder_client::ForwarderClient, Invocation};
@@ -97,10 +97,20 @@ impl ConnectionHandle {
 }
 
 pub async fn connect(ip: &String, port: &String) -> anyhow::Result<ConnectionHandle> {
-    // TODO: Spin up the server if it doesn't already exist
-    // NOTE: Perhaps make server spinup a feature flag?
     Ok(ConnectionHandle(
-        ForwarderClient::connect("http://".to_string() + ip + ":" + port).await?,
+        match ForwarderClient::connect("http://".to_string() + ip + ":" + port).await {
+            Ok(connection) => connection,
+            Err(err) => {
+                if cfg!(feature = "autostart-server") {
+                    Command::new("norgopolis-server").spawn()?;
+                    return Ok(ConnectionHandle(
+                        ForwarderClient::connect("http://".to_string() + ip + ":" + port).await?,
+                    ));
+                }
+
+                return Err(err.into());
+            }
+        },
     ))
 }
 
