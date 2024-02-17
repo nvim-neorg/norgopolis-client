@@ -1,5 +1,9 @@
 use futures::FutureExt;
-use std::{future::Future, process::Command};
+use std::{
+    future::Future,
+    io::{BufReader, Read},
+    process::{Command, Stdio},
+};
 
 pub use norgopolis_protos::client_communication::MessagePack;
 use norgopolis_protos::client_communication::{forwarder_client::ForwarderClient, Invocation};
@@ -102,10 +106,23 @@ pub async fn connect(ip: &String, port: &String) -> anyhow::Result<ConnectionHan
             Ok(connection) => connection,
             Err(err) => {
                 if cfg!(feature = "autostart-server") {
-                    Command::new("norgopolis-server").spawn()?;
-                    return Ok(ConnectionHandle(
-                        ForwarderClient::connect("http://".to_string() + ip + ":" + port).await?,
-                    ));
+                    let mut command = Command::new("norgopolis-server")
+                        .stdout(Stdio::piped())
+                        .spawn()?;
+
+                    if let Some(stdout) = command.stdout.take() {
+                        let mut buffer = BufReader::new(stdout);
+                        let mut str = [b' '; 5];
+
+                        buffer.read_exact(&mut str)?;
+
+                        if str.starts_with(b"ready") {
+                            return Ok(ConnectionHandle(
+                                ForwarderClient::connect("http://".to_string() + ip + ":" + port)
+                                    .await?,
+                            ));
+                        }
+                    }
                 }
 
                 return Err(err.into());
