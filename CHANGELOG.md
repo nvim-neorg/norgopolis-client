@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/nvim-neorg/norgopolis-client/compare/v0.4.0...v0.5.0) (2024-02-17)
+
+
+### Features
+
+* wait for norgopolis-server's "ready" message ([dca541e](https://github.com/nvim-neorg/norgopolis-client/commit/dca541ef23be6865ce715731d25713f66f09e9c7))
+
 ## [0.4.0](https://github.com/nvim-neorg/norgopolis-client/compare/v0.3.0...v0.4.0) (2023-12-29)
 
 
