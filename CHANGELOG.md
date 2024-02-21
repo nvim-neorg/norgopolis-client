@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0](https://github.com/nvim-neorg/norgopolis-client/compare/v0.5.0...v0.6.0) (2024-02-21)
+
+
+### Features
+
+* add documentation, only spawn the norgopolis instance when the target address is local ([7e385db](https://github.com/nvim-neorg/norgopolis-client/commit/7e385db27db503259bd10cbe56be6ded07a2f00a))
+
+
+### Bug Fixes
+
+* remove "automatic semver" bit in CI title ([8c4faa8](https://github.com/nvim-neorg/norgopolis-client/commit/8c4faa8d0ab2b6460fc78701aa4977b071f63d91))
+
 ## [0.5.0](https://github.com/nvim-neorg/norgopolis-client/compare/v0.4.0...v0.5.0) (2024-02-17)
 
 
